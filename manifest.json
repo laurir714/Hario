@@ -1,0 +1,16 @@
+{
+  "name": "Hario Switch V03 Reseptilaskuri",
+  "short_name": "Hario V03",
+  "description": "Reseptilaskuri ja ajastin Hario Switch V03 -kahville",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4efe9",
+  "theme_color": "#5d4037",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

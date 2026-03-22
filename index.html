@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hario Switch V03 Reseptilaskuri</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="theme-color" content="#5d4037">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4efe9;
+            color: #3e2723;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid #795548;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            background-color: #5d4037;
+            color: white;
+            font-size: 18px;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #3e2723;
+        }
+        #tulos {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            border-left: 6px solid #5d4037;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .vaihe {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .vaihe:last-child {
+            border-bottom: none;
+        }
+        .aika {
+            font-weight: bold;
+            color: #d84315;
+            display: inline-block;
+            width: 90px;
+        }
+        .info-box {
+            background-color: #eefeeb;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Hario Switch V03</h1>
+
+    <div class="form-group">
+        <label for="resepti">1. Valitse resepti:</label>
+        <select id="resepti" onchange="paivitaOptimiRatio()">
+            <option value="1">1. Bright Clean Immersion</option>
+            <option value="2">2. High-Clarity Short Immersion</option>
+            <option value="3">3. Hybrid Clarity</option>
+            <option value="4">4. Layered Fruit Hybrid</option>
+            <option value="5">5. Delicate Long Hybrid</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="vesi">2. Veden määrä (300 - 800 g):</label>
+        <input type="number" id="vesi" min="300" max="800" step="1" value="600">
+    </div>
+
+    <div class="form-group">
+        <label for="ratio">3. Kahvin ja veden suhde (1:X):</label>
+        <input type="number" id="ratio" min="15" max="20" step="0.1" value="16.5">
+        <small style="color: #666;">Optimi asetetaan automaattisesti reseptin mukaan, mutta voit hienosäätää sitä (15 - 20 välillä).</small>
+    </div>
+
+    <button onclick="laskeResepti()">Laske resepti</button>
+
+    <div id="tulos">
+        </div>
+
+    <script>
+        // Reseptien tiedot ja logiikka
+        const reseptit = {
+            "1": {
+                nimi: "Bright Clean Immersion",
+                tavoite: "Kirkas, hedelmäinen, kevyt runko.",
+                optimiRatio: 16.5,
+                luoVaiheet: (w) => `
+                    <div class="vaihe"><span class="aika">0:00</span> Sulje switch, kahvi sisään.</div>
+                    <div class="vaihe"><span class="aika">0:00–0:20</span> Kaada kaikki vettä <strong>${w} g</strong> (92–93 °C). Kevyt keski-karkea jauhatus DF64:llä (karkeampi jauhe + lyhyempi aika → kirkkaampi kuppi).</div>
+                    <div class="vaihe"><span class="aika">0:20</span> 5–6 hellää sekoitusta, yksi kevyt swirl.</div>
+                    <div class="vaihe"><span class="aika">0:20–2:20</span> Immersiouutto; suhteellisen lyhyt steep tukee kirkkautta.</div>
+                    <div class="vaihe"><span class="aika">2:20</span> Avaa switch.</div>
+                    <div class="vaihe"><span class="aika">Huom:</span> Valuma valmis 3:00–3:30; jos menee yli 3:30 ja maku painuu raskaaksi, mene karkeammalle.</div>
+                `
+            },
+            "2": {
+                nimi: "High-Clarity Short Immersion",
+                tavoite: "Mahdollisimman teemäinen ja läpikuultava, korkea happo & hedelmäisyys.",
+                optimiRatio: 17.0,
+                luoVaiheet: (w) => {
+                    const k1 = Math.round(w * 0.25);
+                    const k2 = w - k1; // Varmistetaan että summa on tasan W
+                    return `
+                    <div class="vaihe"><span class="aika">0:00</span> Sulje switch, kahvi sisään.</div>
+                    <div class="vaihe"><span class="aika">0:00–0:15</span> Bloom 25% vettä eli <strong>${k1} g</strong> (92–94 °C).</div>
+                    <div class="vaihe"><span class="aika">0:15</span> 4–5 sekoitusta, pieni swirl; pidetään agitaatio maltillisena, jotta fines ei nosta sameutta.</div>
+                    <div class="vaihe"><span class="aika">0:15–0:45</span> Bloom-uutto.</div>
+                    <div class="vaihe"><span class="aika">0:45–1:00</span> Kaada loput 75% vettä eli <strong>${k2} g</strong> rauhallisena kaatona. (Yhteensä ${w}g)</div>
+                    <div class="vaihe"><span class="aika">1:00</span> Yksi kevyt swirl.</div>
+                    <div class="vaihe"><span class="aika">1:20</span> Avaa switch (hyvin lyhyt kokonaisimmersio korostaa hedelmäisyyttä ja kukkaisuutta).</div>
+                    <div class="vaihe"><span class="aika">Huom:</span> Valuma valmis 2:30–3:00; jos aika on lyhyempi ja kuppi ohut/hapan, säädä aavistuksen hienompaan.</div>
+                `}
+            },
+            "3": {
+                nimi: "Hybrid Clarity",
+                tavoite: "Kirkas, paljon marjaisuutta, silti hyvä makeus.",
+                optimiRatio: 16.0,
+                luoVaiheet: (w) => {
+                    const k1 = Math.round(w * 0.50);
+                    const k2 = w - k1;
+                    return `
+                    <div class="vaihe"><span class="aika">0:00</span> Switch aluksi <strong>AUKI</strong>, kahvi pedissä.</div>
+                    <div class="vaihe"><span class="aika">0:00–0:30</span> Kaato 1: 50% vettä eli <strong>${k1} g</strong> (92–94 °C) keskeltä ulos ja takaisin. Tämä perkolaatio nostaa esiin kirkkautta.</div>
+                    <div class="vaihe"><span class="aika">0:30</span> <strong>SULJE</strong> switch, 3–4 hellää sekoitusta.</div>
+                    <div class="vaihe"><span class="aika">0:45</span> Kaato 2: 50% vettä eli <strong>${k2} g</strong> yhdellä tasaisella kaadolla keskelle. (Yhteensä ${w}g)</div>
+                    <div class="vaihe"><span class="aika">0:45–1:45</span> Immersiouutto.</div>
+                    <div class="vaihe"><span class="aika">1:45</span> Avaa switch.</div>
+                    <div class="vaihe"><span class="aika">Huom:</span> Valuma valmis 2:45–3:15; hieman karkeampi jauhatus suositeltu.</div>
+                `}
+            },
+            "4": {
+                nimi: "Layered Fruit Hybrid",
+                tavoite: "Selkeä, marjainen, mutta hieman enemmän bodya.",
+                optimiRatio: 16.0,
+                luoVaiheet: (w) => {
+                    const k1 = Math.round(w * 0.30);
+                    const k2 = Math.round(w * 0.40);
+                    const k3 = w - k1 - k2;
+                    return `
+                    <div class="vaihe"><span class="aika">0:00</span> Switch <strong>KIINNI</strong>, kahvi sisään.</div>
+                    <div class="vaihe"><span class="aika">0:00–0:20</span> Kaato 1: 30% vettä eli <strong>${k1} g</strong>, kevyt bloom + immersio.</div>
+                    <div class="vaihe"><span class="aika">0:20</span> 4–5 sekoitusta.</div>
+                    <div class="vaihe"><span class="aika">0:20–0:50</span> Immersiobloom.</div>
+                    <div class="vaihe"><span class="aika">0:50</span> <strong>AVAA</strong> switch ja kaada kaato 2: 40% vettä eli <strong>${k2} g</strong> tasaisena kaatona.</div>
+                    <div class="vaihe"><span class="aika">1:20</span> <strong>SULJE</strong> switch.</div>
+                    <div class="vaihe"><span class="aika">1:20–1:30</span> Kaato 3: 30% vettä eli <strong>${k3} g</strong> keskelle; ei sekoitusta enää. (Yhteensä ${w}g)</div>
+                    <div class="vaihe"><span class="aika">1:50</span> Avaa switch.</div>
+                    <div class="vaihe"><span class="aika">Huom:</span> Valuma valmis 3:00–3:30.</div>
+                `}
+            },
+            "5": {
+                nimi: "Delicate Long Hybrid",
+                tavoite: "Teemäinen, mutta makeampi ja syvempi jälkimaku.",
+                optimiRatio: 17.5,
+                luoVaiheet: (w) => {
+                    const k1 = Math.round(w * 0.40);
+                    const k2 = w - k1;
+                    return `
+                    <div class="vaihe"><span class="aika">0:00</span> Switch <strong>KIINNI</strong>, kahvi sisään.</div>
+                    <div class="vaihe"><span class="aika">0:00–0:25</span> Kaato 1: 40% vettä eli <strong>${k1} g</strong> (92–93 °C).</div>
+                    <div class="vaihe"><span class="aika">0:25</span> 5–6 sekoitusta, pieni swirl.</div>
+                    <div class="vaihe"><span class="aika">0:25–1:30</span> Immersiouutto, pitkä bloom + steep tekee makeutta.</div>
+                    <div class="vaihe"><span class="aika">1:30</span> <strong>AVAA</strong> switch ja kaada kaato 2: 60% vettä eli <strong>${k2} g</strong> perkolaatio-henkisesti. (Yhteensä ${w}g)</div>
+                    <div class="vaihe"><span class="aika">2:00</span> <strong>SULJE</strong> switch, anna vielä uuttua.</div>
+                    <div class="vaihe"><span class="aika">2:40</span> Avaa switch ja anna valua loppuun.</div>
+                    <div class="vaihe"><span class="aika">Huom:</span> Kokonaisaika 3:30–4:00; jos kuppi on liian täyteläinen/samea, mene karkeammalle.</div>
+                `}
+            }
+        };
+
+        // Vaihtaa ratiokentän arvon valitun reseptin optimiksi
+        function paivitaOptimiRatio() {
+            const valittuId = document.getElementById("resepti").value;
+            const optimi = reseptit[valittuId].optimiRatio;
+            document.getElementById("ratio").value = optimi;
+        }
+
+        function laskeResepti() {
+            const reseptiId = document.getElementById("resepti").value;
+            let vesi = parseInt(document.getElementById("vesi").value);
+            let ratio = parseFloat(document.getElementById("ratio").value);
+
+            // Rajoitetaan vesi ja ratio annettuihin raameihin kaiken varalta
+            if (vesi < 300) vesi = 300;
+            if (vesi > 800) vesi = 800;
+            if (ratio < 15) ratio = 15;
+            if (ratio > 20) ratio = 20;
+
+            const aktiivinenResepti = reseptit[reseptiId];
+            
+            // Lasketaan kahvin määrä
+            const kahvi = (vesi / ratio).toFixed(1);
+
+            // Päivitetään UI
+            const tulosDiv = document.getElementById("tulos");
+            tulosDiv.style.display = "block";
+            
+            tulosDiv.innerHTML = `
+                <div class="info-box">
+                    <strong>Tavoite:</strong> ${aktiivinenResepti.tavoite}
+                </div>
+                <h3 style="margin-top: 0;">Resepti: ${aktiivinenResepti.nimi}</h3>
+                <p>
+                    ☕ <strong>Kahvia:</strong> ${kahvi} g<br>
+                    💧 <strong>Vettä:</strong> ${vesi} g<br>
+                    ⚖️ <strong>Ratio:</strong> 1:${ratio}
+                </p>
+                <h3>Ohjeet:</h3>
+                ${aktiivinenResepti.luoVaiheet(vesi)}
+            `;
+        }
+
+        // Asetetaan alkuarvot heti sivun ladattua
+        window.onload = paivitaOptimiRatio;
+    </script>
+
+</body>
+</html>
