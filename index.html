@@ -71,8 +71,8 @@
         }
         .vaihe {
             display: grid;
-            grid-template-columns: 95px 1fr;
-            gap: 15px;
+            grid-template-columns: 85px 1fr; /* 85px vasemmalle, loput tekstille */
+            gap: 12px;
             margin-bottom: 12px;
             padding-bottom: 12px;
             border-bottom: 1px solid #eee;
@@ -84,6 +84,7 @@
         .aika {
             font-weight: bold;
             color: #d84315;
+            white-space: nowrap; /* Estää ajan rivittymisen usealle riville */
         }
         .info-box {
             background-color: #eefeeb;
@@ -126,19 +127,19 @@
         </div>
 
     <script>
-        // Reseptien tiedot ja logiikka
+        // Reseptien tiedot ja HTML-rakenne aikoja ja tekstejä varten
         const reseptit = {
             "1": {
                 nimi: "Bright Clean Immersion",
                 tavoite: "Kirkas ja hedelmäinen maku, kevyt suutuntuma.",
                 optimiRatio: 16.5,
                 luoVaiheet: (w) => `
-                    <div class="vaihe"><span class="aika">0:00</span> Sulje Switch ja kaada kahvijauhe suodattimeen.</div>
-                    <div class="vaihe"><span class="aika">0:00–0:20</span> Kaada kaikki vesi, <strong>${w} g</strong> (92–93 °C). Käytä kevyttä, keskikarkeaa jauhatusta (karkeampi jauhatus ja lyhyempi aika tuovat esiin kirkkautta).</div>
-                    <div class="vaihe"><span class="aika">0:20</span> Sekoita hellästi 5–6 kertaa ja pyöräytä (swirl) kerran kevyesti.</div>
-                    <div class="vaihe"><span class="aika">0:20–2:20</span> Immersiouutto. Suhteellisen lyhyt uuttoaika korostaa kahvin kirkkautta.</div>
-                    <div class="vaihe"><span class="aika">2:20</span> Avaa Switch.</div>
-                    <div class="vaihe"><span class="aika">Huom:</span> Veden tulisi valua läpi ajassa 3:00–3:30. Jos aika ylittää 3:30 ja maku on raskas, säädä jauhatusta karkeammaksi.</div>
+                    <div class="vaihe"><div class="aika">0:00</div><div class="teksti">Sulje Switch ja kaada kahvijauhe suodattimeen.</div></div>
+                    <div class="vaihe"><div class="aika">0:00–0:20</div><div class="teksti">Kaada kaikki vesi, <strong>${w} g</strong> (92–93 °C). Käytä kevyttä, keskikarkeaa jauhatusta (karkeampi jauhatus ja lyhyempi aika tuovat esiin kirkkautta).</div></div>
+                    <div class="vaihe"><div class="aika">0:20</div><div class="teksti">Sekoita hellästi 5–6 kertaa ja pyöräytä (swirl) kerran kevyesti.</div></div>
+                    <div class="vaihe"><div class="aika">0:20–2:20</div><div class="teksti">Immersiouutto. Suhteellisen lyhyt uuttoaika korostaa kahvin kirkkautta.</div></div>
+                    <div class="vaihe"><div class="aika">2:20</div><div class="teksti">Avaa Switch.</div></div>
+                    <div class="vaihe"><div class="aika">Huom:</div><div class="teksti">Veden tulisi valua läpi ajassa 3:00–3:30. Jos aika ylittää 3:30 ja maku on raskas, säädä jauhatusta karkeammaksi.</div></div>
                 `
             },
             "2": {
@@ -149,14 +150,14 @@
                     const k1 = Math.round(w * 0.25);
                     const k2 = w - k1;
                     return `
-                    <div class="vaihe"><span class="aika">0:00</span> Sulje Switch ja kaada kahvijauhe suodattimeen.</div>
-                    <div class="vaihe"><span class="aika">0:00–0:15</span> Kaada 25 % vedestä eli <strong>${k1} g</strong> (92–94 °C) kahvin esiuuttoa (bloom) varten.</div>
-                    <div class="vaihe"><span class="aika">0:15</span> Sekoita 4–5 kertaa ja pyöräytä kevyesti. Pidä sekoitus maltillisena, jotta hienojakoinen kahvipöly ei samennuta juomaa.</div>
-                    <div class="vaihe"><span class="aika">0:15–0:45</span> Anna esiuuttua.</div>
-                    <div class="vaihe"><span class="aika">0:45–1:00</span> Kaada loput 75 % vedestä eli <strong>${k2} g</strong> rauhallisesti. (Kokonaismäärä ${w} g)</div>
-                    <div class="vaihe"><span class="aika">1:00</span> Pyöräytä kerran kevyesti.</div>
-                    <div class="vaihe"><span class="aika">1:20</span> Avaa Switch (hyvin lyhyt immersio korostaa hedelmäisyyttä ja kukkaisuutta).</div>
-                    <div class="vaihe"><span class="aika">Huom:</span> Veden tulisi valua läpi ajassa 2:30–3:00. Jos aika on lyhyempi ja maku on ohut tai hapan, säädä jauhatusta hieman hienommaksi.</div>
+                    <div class="vaihe"><div class="aika">0:00</div><div class="teksti">Sulje Switch ja kaada kahvijauhe suodattimeen.</div></div>
+                    <div class="vaihe"><div class="aika">0:00–0:15</div><div class="teksti">Kaada 25 % vedestä eli <strong>${k1} g</strong> (92–94 °C) kahvin esiuuttoa (bloom) varten.</div></div>
+                    <div class="vaihe"><div class="aika">0:15</div><div class="teksti">Sekoita 4–5 kertaa ja pyöräytä kevyesti. Pidä sekoitus maltillisena, jotta hienojakoinen kahvipöly ei samennuta juomaa.</div></div>
+                    <div class="vaihe"><div class="aika">0:15–0:45</div><div class="teksti">Anna esiuuttua.</div></div>
+                    <div class="vaihe"><div class="aika">0:45–1:00</div><div class="teksti">Kaada loput 75 % vedestä eli <strong>${k2} g</strong> rauhallisesti. (Kokonaismäärä ${w} g)</div></div>
+                    <div class="vaihe"><div class="aika">1:00</div><div class="teksti">Pyöräytä kerran kevyesti.</div></div>
+                    <div class="vaihe"><div class="aika">1:20</div><div class="teksti">Avaa Switch (hyvin lyhyt immersio korostaa hedelmäisyyttä ja kukkaisuutta).</div></div>
+                    <div class="vaihe"><div class="aika">Huom:</div><div class="teksti">Veden tulisi valua läpi ajassa 2:30–3:00. Jos aika on lyhyempi ja maku on ohut tai hapan, säädä jauhatusta hieman hienommaksi.</div></div>
                 `}
             },
             "3": {
@@ -167,13 +168,13 @@
                     const k1 = Math.round(w * 0.50);
                     const k2 = w - k1;
                     return `
-                    <div class="vaihe"><span class="aika">0:00</span> Pidä Switch aluksi <strong>AUKI</strong> ja kaada kahvijauhe suodattimeen.</div>
-                    <div class="vaihe"><span class="aika">0:00–0:30</span> 1. kaato: 50 % vedestä eli <strong>${k1} g</strong> (92–94 °C) kaataen keskeltä reunoille ja takaisin. Tämä perkolaatiovaihe korostaa kirkkautta.</div>
-                    <div class="vaihe"><span class="aika">0:30</span> <strong>SULJE</strong> Switch ja sekoita hellästi 3–4 kertaa.</div>
-                    <div class="vaihe"><span class="aika">0:45</span> 2. kaato: 50 % vedestä eli <strong>${k2} g</strong> tasaisesti keskelle kaataen. (Kokonaismäärä ${w} g)</div>
-                    <div class="vaihe"><span class="aika">0:45–1:45</span> Immersiouutto.</div>
-                    <div class="vaihe"><span class="aika">1:45</span> Avaa Switch.</div>
-                    <div class="vaihe"><span class="aika">Huom:</span> Veden tulisi valua läpi ajassa 2:45–3:15. Hieman karkeampi jauhatus on suositeltava.</div>
+                    <div class="vaihe"><div class="aika">0:00</div><div class="teksti">Pidä Switch aluksi <strong>AUKI</strong> ja kaada kahvijauhe suodattimeen.</div></div>
+                    <div class="vaihe"><div class="aika">0:00–0:30</div><div class="teksti">1. kaato: 50 % vedestä eli <strong>${k1} g</strong> (92–94 °C) kaataen keskeltä reunoille ja takaisin. Tämä perkolaatiovaihe korostaa kirkkautta.</div></div>
+                    <div class="vaihe"><div class="aika">0:30</div><div class="teksti"><strong>SULJE</strong> Switch ja sekoita hellästi 3–4 kertaa.</div></div>
+                    <div class="vaihe"><div class="aika">0:45</div><div class="teksti">2. kaato: 50 % vedestä eli <strong>${k2} g</strong> tasaisesti keskelle kaataen. (Kokonaismäärä ${w} g)</div></div>
+                    <div class="vaihe"><div class="aika">0:45–1:45</div><div class="teksti">Immersiouutto.</div></div>
+                    <div class="vaihe"><div class="aika">1:45</div><div class="teksti">Avaa Switch.</div></div>
+                    <div class="vaihe"><div class="aika">Huom:</div><div class="teksti">Veden tulisi valua läpi ajassa 2:45–3:15. Hieman karkeampi jauhatus on suositeltava.</div></div>
                 `}
             },
             "4": {
@@ -185,15 +186,15 @@
                     const k2 = Math.round(w * 0.40);
                     const k3 = w - k1 - k2;
                     return `
-                    <div class="vaihe"><span class="aika">0:00</span> Sulje Switch ja kaada kahvijauhe suodattimeen.</div>
-                    <div class="vaihe"><span class="aika">0:00–0:20</span> 1. kaato: 30 % vedestä eli <strong>${k1} g</strong>. Kevyt esiuutto (bloom) ja immersio.</div>
-                    <div class="vaihe"><span class="aika">0:20</span> Sekoita 4–5 kertaa.</div>
-                    <div class="vaihe"><span class="aika">0:20–0:50</span> Anna uuttua suljetussa suodattimessa.</div>
-                    <div class="vaihe"><span class="aika">0:50</span> <strong>AVAA</strong> Switch ja tee 2. kaato: 40 % vedestä eli <strong>${k2} g</strong> tasaisesti kaataen.</div>
-                    <div class="vaihe"><span class="aika">1:20</span> <strong>SULJE</strong> Switch.</div>
-                    <div class="vaihe"><span class="aika">1:20–1:30</span> 3. kaato: 30 % vedestä eli <strong>${k3} g</strong> keskelle kaataen. Älä enää sekoita. (Kokonaismäärä ${w} g)</div>
-                    <div class="vaihe"><span class="aika">1:50</span> Avaa Switch.</div>
-                    <div class="vaihe"><span class="aika">Huom:</span> Veden tulisi valua läpi ajassa 3:00–3:30.</div>
+                    <div class="vaihe"><div class="aika">0:00</div><div class="teksti">Sulje Switch ja kaada kahvijauhe suodattimeen.</div></div>
+                    <div class="vaihe"><div class="aika">0:00–0:20</div><div class="teksti">1. kaato: 30 % vedestä eli <strong>${k1} g</strong>. Kevyt esiuutto (bloom) ja immersio.</div></div>
+                    <div class="vaihe"><div class="aika">0:20</div><div class="teksti">Sekoita 4–5 kertaa.</div></div>
+                    <div class="vaihe"><div class="aika">0:20–0:50</div><div class="teksti">Anna uuttua suljetussa suodattimessa.</div></div>
+                    <div class="vaihe"><div class="aika">0:50</div><div class="teksti"><strong>AVAA</strong> Switch ja tee 2. kaato: 40 % vedestä eli <strong>${k2} g</strong> tasaisesti kaataen.</div></div>
+                    <div class="vaihe"><div class="aika">1:20</div><div class="teksti"><strong>SULJE</strong> Switch.</div></div>
+                    <div class="vaihe"><div class="aika">1:20–1:30</div><div class="teksti">3. kaato: 30 % vedestä eli <strong>${k3} g</strong> keskelle kaataen. Älä enää sekoita. (Kokonaismäärä ${w} g)</div></div>
+                    <div class="vaihe"><div class="aika">1:50</div><div class="teksti">Avaa Switch.</div></div>
+                    <div class="vaihe"><div class="aika">Huom:</div><div class="teksti">Veden tulisi valua läpi ajassa 3:00–3:30.</div></div>
                 `}
             },
             "5": {
@@ -204,14 +205,14 @@
                     const k1 = Math.round(w * 0.40);
                     const k2 = w - k1;
                     return `
-                    <div class="vaihe"><span class="aika">0:00</span> Sulje Switch ja kaada kahvijauhe suodattimeen.</div>
-                    <div class="vaihe"><span class="aika">0:00–0:25</span> 1. kaato: 40 % vedestä eli <strong>${k1} g</strong> (92–93 °C).</div>
-                    <div class="vaihe"><span class="aika">0:25</span> Sekoita 5–6 kertaa ja pyöräytä kevyesti.</div>
-                    <div class="vaihe"><span class="aika">0:25–1:30</span> Immersiouutto. Pitkä esiuutto ja haudutus tuovat esiin makeutta.</div>
-                    <div class="vaihe"><span class="aika">1:30</span> <strong>AVAA</strong> Switch ja tee 2. kaato: 60 % vedestä eli <strong>${k2} g</strong> jatkuvalla valumalla (perkolaatio). (Kokonaismäärä ${w} g)</div>
-                    <div class="vaihe"><span class="aika">2:00</span> <strong>SULJE</strong> Switch ja anna kahvin uuttua.</div>
-                    <div class="vaihe"><span class="aika">2:40</span> Avaa Switch ja anna veden valua kokonaan läpi.</div>
-                    <div class="vaihe"><span class="aika">Huom:</span> Kokonaisaika on noin 3:30–4:00. Jos juoma on liian täyteläistä tai sameaa, säädä jauhatusta karkeammaksi.</div>
+                    <div class="vaihe"><div class="aika">0:00</div><div class="teksti">Sulje Switch ja kaada kahvijauhe suodattimeen.</div></div>
+                    <div class="vaihe"><div class="aika">0:00–0:25</div><div class="teksti">1. kaato: 40 % vedestä eli <strong>${k1} g</strong> (92–93 °C).</div></div>
+                    <div class="vaihe"><div class="aika">0:25</div><div class="teksti">Sekoita 5–6 kertaa ja pyöräytä kevyesti.</div></div>
+                    <div class="vaihe"><div class="aika">0:25–1:30</div><div class="teksti">Immersiouutto. Pitkä esiuutto ja haudutus tuovat esiin makeutta.</div></div>
+                    <div class="vaihe"><div class="aika">1:30</div><div class="teksti"><strong>AVAA</strong> Switch ja tee 2. kaato: 60 % vedestä eli <strong>${k2} g</strong> jatkuvalla valumalla (perkolaatio). (Kokonaismäärä ${w} g)</div></div>
+                    <div class="vaihe"><div class="aika">2:00</div><div class="teksti"><strong>SULJE</strong> Switch ja anna kahvin uuttua.</div></div>
+                    <div class="vaihe"><div class="aika">2:40</div><div class="teksti">Avaa Switch ja anna veden valua kokonaan läpi.</div></div>
+                    <div class="vaihe"><div class="aika">Huom:</div><div class="teksti">Kokonaisaika on noin 3:30–4:00. Jos juoma on liian täyteläistä tai sameaa, säädä jauhatusta karkeammaksi.</div></div>
                 `}
             }
         };
