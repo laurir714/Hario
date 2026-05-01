@@ -127,6 +127,27 @@
         </div>
 
     <script>
+        // --- NÄYTÖN PÄÄLLÄ PITÄMINEN (Wake Lock API) ---
+        let wakeLock = null;
+
+        async function pyydaNayttoPaalle() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    
+                    // Jos sovellus käy taustalla ja palataan takaisin, pyydetään lukitus uudelleen
+                    document.addEventListener('visibilitychange', async () => {
+                        if (wakeLock !== null && document.visibilityState === 'visible') {
+                            wakeLock = await navigator.wakeLock.request('screen');
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error('Näytön päällä pitäminen epäonnistui:', err);
+            }
+        }
+        // ------------------------------------------------
+
         // Reseptien tiedot ja HTML-rakenne aikoja ja tekstejä varten
         const reseptit = {
             "1": {
@@ -225,6 +246,9 @@
         }
 
         function laskeResepti() {
+            // Aktivoi näytön päällä pitämisen, kun laske-nappia painetaan
+            pyydaNayttoPaalle();
+
             const reseptiId = document.getElementById("resepti").value;
             let vesi = parseInt(document.getElementById("vesi").value);
             let ratio = parseFloat(document.getElementById("ratio").value);
